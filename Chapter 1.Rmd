@@ -7,6 +7,26 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+# install.packages(c(
+#   "directlabels", "dplyr", "gameofthrones", "ggforce", "gghighlight", 
+#   "ggnewscale", "ggplot2", "ggraph", "ggrepel", "ggtext", "ggthemes", 
+#   "hexbin", "mapproj", "maps", "munsell", "ozmaps", "paletteer", 
+#   "patchwork", "rmapshaper", "scico", "seriation", "sf", "stars", 
+#   "tidygraph", "tidyr", "wesanderson" 
+# ))
+# packages<-c(
+#   "directlabels", "dplyr", "gameofthrones", "ggforce", "gghighlight", 
+#   "ggnewscale", "ggplot2", "ggraph", "ggrepel", "ggtext", "ggthemes", 
+#   "hexbin", "mapproj", "maps", "munsell", "ozmaps", "paletteer", 
+#   "patchwork", "rmapshaper", "scico", "seriation", "sf", "stars", 
+#   "tidygraph", "tidyr", "wesanderson" 
+# )
+# 
+# library(dplyr)
+# library(tidyr)
+# library(ggplot2)
+# lapply(packages, library, character.only = TRUE)
+
 ```
 
 ## R Markdown
@@ -28,3 +48,46 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+5 components to ggplot2 grammar:
+Layer- geometrical or statistical visual pieces
+Scales- ways to demonstrate magnitude of variables, plus legends and axes
+A coord, or coordinate system- what you'd expect
+Facet- Ways to group the data on the chart(s)
+Theme- House style
+
+Packages the book reccomends for exercises are included in the setup section of this markdown
+
+
+Ex 2.2.1
+1. List five functions that you could use to get more information about the mpg dataset.
+
+Glimpse
+Summarise
+Tidyr group by (then summarise)
+Histogram
+Boxplot
+
+2. How can you find out what other datasets are included with ggplot2?
+
+Read the documentation/vignette. > help(package=ggplot2)
+
+
+3. Apart from the US, most countries use fuel consumption (fuel consumed over fixed distance) rather than fuel economy (distance travelled with fixed amount of fuel). How could you convert cty and hwy into the European standard of l/100km?
+
+Take the reciprocal of the function to convert to fuel per fixed distance. Then multiple by appropriate conversion rates to move to metric units.
+
+4. Which manufacturer has the most models in this dataset? Which model has the most variations? Does your answer change if you remove the redundant specification of drive train (e.g. “pathfinder 4wd”, “a4 quattro”) from the model name?
+For most models, Toyota: mpg%>%dplyr::group_by(manufacturer)%>%summarise_each(funs(n_distinct),model)%>%arrange(model)
+Model with most variations, Caravan 2WD: mpg%>%dplyr::group_by(model)%>%count(model,sort=TRUE)
+Remove redundant specification, using Regex to remove anything after first space, answer is Audi: mpg%>%dplyr::group_by(model)%>%mutate(model=sub(" .*", "", model))%>%count(model,sort=TRUE)
+
+#Three key components to a plot
+Data, self-explanatory
+Aes, what relationships you are exploring (autoname to x then y)
+Geom, how you are visually representing them
+
+One line per element is best practise for easy to read code, with a + in between as ever.
+
+
+
