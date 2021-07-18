@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+# Run the below uncommented on first run, then comment out before knitting markdown
 # install.packages(c(
 #   "directlabels", "dplyr", "gameofthrones", "ggforce", "gghighlight", 
 #   "ggnewscale", "ggplot2", "ggraph", "ggrepel", "ggtext", "ggthemes", 
@@ -91,3 +92,73 @@ One line per element is best practise for easy to read code, with a + in between
 
 
 
+#Exercise 2.2.1
+1.How would you describe the relationship between cty and hwy? Do you have any concerns about drawing conclusions from that plot?
+Strong positive linear relationship as per graph.Slight evidence of heteroskedasticity and some minor outliers. From a GGplot2 standpoint the point Geom doesn't handle duplicates well, add in a jitter to better capture clustering around 'duplicate' values.
+```{r, figures-side, fig.show="hold", out.width="50%"}
+par(mar = c(4, 4, .1, .1))
+#above two lines markdown boilerplate from https://bookdown.org/yihui/rmarkdown-cookbook/figures-side.html
+ggplot(mpg, aes(cty,hwy))+geom_point()
+ggplot(mpg, aes(cty,hwy))+geom_point(position = "jitter")
+
+```
+2. What does ggplot(mpg, aes(model, manufacturer)) + geom_point() show? Is it useful? How could you modify the data to make it more informative?
+
+It shows the model names against the manufacturer names and is as good as useless due to the unintelligible x axis.To make more informatice I would swap the axis and y axis. This still isn't a great graph, but it presents the information asked for in the question. MOdifying the data by removing the extraneous drive specification also helps.
+```{r, out.width="100%"}
+
+ggplot(mpg, aes(model, manufacturer)) + geom_point()
+ggplot(mpg, aes(manufacturer, model)) + geom_point()
+
+mpg2<-mpg%>%dplyr::group_by(model)%>%mutate(model=sub(" .*", "", model))
+ggplot(mpg2, aes(manufacturer, model)) + geom_point()
+
+
+
+```
+3. Describe the data, aesthetic mappings and layers used for each of the following plots. You’ll need to guess a little because you haven’t seen all the datasets and functions yet, but use your common sense! See if you can predict what the plot will look like before running the code.
+
+ggplot(mpg, aes(cty, hwy)) + geom_point()
+mpg data, cty on x and hwy on y, points used
+
+ggplot(diamonds, aes(carat, price)) + geom_point()
+Diamonds data set, mapping relationship between carats and price. Points used
+
+ggplot(economics, aes(date, unemploy)) + geom_line()
+Economics data set, unemployment over time, line graph
+
+ggplot(mpg, aes(cty)) + geom_histogram()
+Mpg, histogram of city miles per gallon.
+
+
+```{r, figures-side, fig.show="hold", out.width="50%"}
+par(mar = c(4, 4, .1, .1))
+#above two lines markdown boilerplate from https://bookdown.org/yihui/rmarkdown-cookbook/figures-side.html
+ggplot(mpg, aes(cty, hwy)) + geom_point()
+
+ggplot(diamonds, aes(carat, price)) + geom_point()
+
+ggplot(economics, aes(date, unemploy)) + geom_line()
+
+ggplot(mpg, aes(cty,hwy)) + geom_point(shape='star')
+
+
+
+```
+ 
+To change the colour, shape, or size, put inside the aes call itself and set equal to how you want it to be specified.
+To simply set these aesethetics for aesthetic reasons add in the geom_point (for example) call instead.
+
+
+
+
+Experiment with the colour, shape and size aesthetics. What happens when you map them to continuous values? What about categorical values? What happens when you use more than one aesthetic in a plot?
+
+```{r}
+ggplot(diamonds, aes(carat, price))+geom_point()
+ggplot(diamonds, aes(carat, price, colour=cut))+geom_point()
+ggplot(diamonds, aes(carat, price, colour=depth))+geom_point()
+ggplot(diamonds, aes(carat, price, size=depth, colour=table))+geom_point(alpha=0.1)
+
+
+```
