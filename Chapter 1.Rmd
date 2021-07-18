@@ -151,8 +151,10 @@ To simply set these aesethetics for aesthetic reasons add in the geom_point (for
 
 
 
+# Exercises 2.4.1
+1.Experiment with the colour, shape and size aesthetics. What happens when you map them to continuous values? What about categorical values? What happens when you use more than one aesthetic in a plot?
 
-Experiment with the colour, shape and size aesthetics. What happens when you map them to continuous values? What about categorical values? What happens when you use more than one aesthetic in a plot?
+Continuous variables are better done with colour or size, discreet variables are better done with colour or shape. This corroborates the arguments made in the textbook. Using more than one aesthetic compiles, but leads to nonsenical results.
 
 ```{r}
 ggplot(diamonds, aes(carat, price))+geom_point()
@@ -162,3 +164,66 @@ ggplot(diamonds, aes(carat, price, size=depth, colour=table))+geom_point(alpha=0
 
 
 ```
+
+
+2.What happens if you map a continuous variable to shape? Why? What happens if you map trans to shape? Why?
+
+A continous variable can't be mapped to shape. This make sense as otherwise it would require as many shapes as unique values in the dataset.
+
+If Trans is mapped to shape the graph compiles as the number of discrete non-duplicates is less than the number of possible shapes. It isn't a great data visualisation however, as the data clusters at points, making the graph impossible to interpret.Note that there are a maximum of six shapes allowed per visualisation as per warning.
+
+```{r}
+ggplot(diamonds, aes(carat, cut, shape=price))+geom_point()
+ggplot(mpg, aes(hwy, cty, shape=trans))+geom_point()
+
+
+```
+
+
+3.How is drive train related to fuel economy? How is drive train related to engine size and class?
+
+Jitter added in due to duplicate values. Front wheel drive has the best fuel economony overall, then four wheel drive is better, although rear wheel drive can be more efficient than four wheel on the highway.
+
+The graph probably gets too complicated when including three variables. Rear wheel is for small cars with big engines, front drive is for most cars with smaller engines and four wheel drive is for big offroaders. A graph only it's coder could love. Clear motivation provided for the use of faceting.
+
+
+```{r, figures-side, fig.show="hold", out.width="50%"}
+par(mar = c(4, 4, .1, .1))
+ggplot(mpg, aes(cty,hwy, colour=drv))+geom_point(position='jitter')
+ggplot(mpg, aes(displ, class, colour=drv))+geom_point(position = 'jitter')
+
+```
+To add faceting for graphs, you just need to add +facet_wrap(~variableName) for the variable which you would like to facet by.
+
+# Exercises 2.5.1
+
+1. What happens if you try to facet by a continuous variable like hwy? What about cyl? What’s the key difference?
+
+Typo here, hwy is discrete not continous (at least mathematically). It facets a large amount, leading to a difficult to interpret graph. Cycle is better as it leads to a clearer to interpret graph. From this one can see that it is better to facet on fewer points rather than more.
+
+```{r, figures-side, fig.show="hold", out.width="50%"}
+par(mar = c(4, 4, .1, .1))
+ggplot(mpg, aes(cty,drv))+geom_point()+facet_wrap(~hwy)
+ggplot(mpg, aes(cty,drv))+geom_point(position='jitter')+facet_wrap(~cyl)
+ggplot(mpg,aes(hwy))+geom_histogram()
+```
+2. Use faceting to explore the 3-way relationship between fuel economy, engine size, and number of cylinders. How does faceting by number of cylinders change your assessement of the relationship between engine size and fuel economy?
+
+As engine size increases fuel efficientcy decreases. Number of cylinders is greater as the engine size increases.
+Faceting doesn't change my assessment, but it does show much clearer evidence of clustering by cylinder size.
+
+
+```{r, figures-side, fig.show="hold", out.width="50%"}
+par(mar = c(4, 4, .1, .1))
+ggplot(mpg, aes(displ,cty, colour=cyl))+geom_point(position = 'jitter')+scale_color_continuous(trans='reverse')
+ggplot(mpg, aes(displ,cty, colour=cyl))+geom_point(position='jitter')+facet_wrap(~cyl)+scale_color_continuous(trans='reverse')
+```
+
+3.Read the documentation for facet_wrap(). What arguments can you use to control how many rows and columns appear in the output?
+
+nrow and ncol are the arguments to control this
+
+4.What does the scales argument to facet_wrap() do? When might you use it?
+
+Scales determines if the scales should be a fixed size throughout. Given the default is fixed, this parameter would be used when you want to vary the scale size.
+
